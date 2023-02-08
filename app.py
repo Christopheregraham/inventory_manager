@@ -17,10 +17,10 @@ def clean_date(date):
         new_date = datetime.date(year, month, day)
     except ValueError:
         input('''
-              \rThe price format is invalid
-              \r Price should be dollar and cents
-              \r Example: 29.99
-              \r Please exclude currency symbols
+              \rThe Date format is invalid
+              \rPlease input the date in MM/DD/YYYY
+              \rExample: 10/26/2019
+              \rPlease hit enter and try again
               \r Hit Enter key to continue
               ''')
         return
@@ -35,8 +35,8 @@ def clean_price(price):
         input('''
               \rThe price format is invalid
               \r Price should be dollar and cents
-              \r Example: 29.99
-              \r Please exclude currency symbols
+              \r Example: $29.99
+              \r Please exclude non USD currency symbols
               \r Hit Enter key to continue
               ''')
         return
@@ -78,7 +78,8 @@ def add_csv():
 def get_product_by_id(productid):
     product = session.query(Product).filter(Product.product_id == productid).one_or_none()
     if product:
-        print(f'{product.product_id} | {product.product_name} | {product.product_price} | {product.product_quantity}| {product.date_updated}')
+        price = price_format(product.product_price)
+        print(f'{product.product_id} | Name: {product.product_name} | Price: {price} | Quantity: {product.product_quantity}| Last Updated: {product.date_updated}')
         time.sleep(2)
     else:
         print('Product not found')
@@ -117,7 +118,30 @@ def backup():
         time.sleep(2)
     
 def add_product():
-    pass
+    name = input('Name: ')
+    quant_error = True
+    while quant_error:
+        quantity = input('Quantity: ')
+        fixed_quant = check_quant(quantity)
+        if type(fixed_quant) == int:
+            quant_error = False
+    date_error = True
+    while date_error:
+        date = input('Date(Ex. 10/22/2019): ')
+        date_fixed = clean_date(date)
+        if type(date_fixed) == datetime.date:
+            date_error = False
+    price_error = True
+    while price_error:
+        price = input('Price (Ex. $9.99): ')
+        fixed_price = clean_price(price)
+        if type(fixed_price) == int:
+            price_error = False
+    new_item = Product(product_name = name, product_price = fixed_price, product_quantity = fixed_quant, date_updated = date_fixed)
+    session.add(new_item)
+    session.commit()
+    print(f'{name} was successfully added!')
+    time.sleep(2)     
     
 def menu():
     while True:
@@ -147,7 +171,7 @@ def app():
         elif choice.lower() == 'b':
             backup()
         elif choice.lower() == 'e':
-            print('goodbye')
+            print('Thanks for using Invetory Manager, Goodbye')
             app_running = False
 
 if __name__ == '__main__':
