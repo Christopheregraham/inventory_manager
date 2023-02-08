@@ -1,5 +1,7 @@
 import datetime
 import csv
+import time
+
 
 from models import (Base, session, Product, engine)
 
@@ -73,23 +75,30 @@ def add_csv():
                 session.add(new_item)
                 session.commit()
                 
-def get_product_by_id(product_id):
-    product = session.query(Product).filter(Product.product_id == product_id).one_or_none()
+def get_product_by_id(productid):
+    product = session.query(Product).filter(Product.product_id == productid).one_or_none()
     if product:
-        return (f'{product.product_id} | {product.product_name} | {product.product_price} | {product.product_quantity}| {product.date_updated}')
+        print(f'{product.product_id} | {product.product_name} | {product.product_price} | {product.product_quantity}| {product.date_updated}')
+        time.sleep(2)
     else:
-        return 'Product not found'
+        print('Product not found')
+        time.sleep(2)
     
 def view_item():
-    try:
-        item_id = input("Please enter the product's id number ")
-        product = int(item_id)
-        value = get_product_by_id(product)
-    except ValueError:
-        print('\r invalud id format, press enter to cont...')
-        return
+    while True:
+        try:
+            item_id = input("Please enter the product's id number ")
+            product = int(item_id)
+            value = get_product_by_id(product)
+            break
+        except ValueError:
+            print('\r invalid id format, press try again...')
+            time.sleep(2)
     return value
 
+def backup(db):
+    
+    
 def menu():
     while True:
         print('''
@@ -114,14 +123,14 @@ def app():
         if choice.lower() == 'v':
             view_item()
         elif choice.lower() == 'a':
-            pass
+            add_product()
         elif choice.lower() == 'b':
-            pass
+            backup()
         elif choice.lower() == 'e':
             print('goodbye')
             app_running = False
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    #app()
-    view_item()
+    app()
+   
