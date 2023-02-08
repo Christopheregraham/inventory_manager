@@ -116,6 +116,10 @@ def backup():
             writer.writerow(row)
         print('Operation Successful')
         time.sleep(2)
+
+def product_exists(product_name):
+    existing_product = session.query(Product).filter_by(product_name=product_name).first()
+    return existing_product is not None
     
 def add_product():
     name = input('Name: ')
@@ -125,23 +129,23 @@ def add_product():
         fixed_quant = check_quant(quantity)
         if type(fixed_quant) == int:
             quant_error = False
-    date_error = True
-    while date_error:
-        date = input('Date(Ex. 10/22/2019): ')
-        date_fixed = clean_date(date)
-        if type(date_fixed) == datetime.date:
-            date_error = False
+    date_fixed = datetime.datetime.now().date()
     price_error = True
     while price_error:
         price = input('Price (Ex. $9.99): ')
         fixed_price = clean_price(price)
         if type(fixed_price) == int:
             price_error = False
-    new_item = Product(product_name = name, product_price = fixed_price, product_quantity = fixed_quant, date_updated = date_fixed)
-    session.add(new_item)
-    session.commit()
-    print(f'{name} was successfully added!')
-    time.sleep(2)     
+    if not product_exists(name)
+        new_item = Product(product_name = name, product_price = fixed_price, product_quantity = fixed_quant, date_updated = date_fixed)
+        session.add(new_item)
+        session.commit()
+        print(f'{name} was successfully added!')
+        time.sleep(2)
+    else:
+        print(f'{name} already exists!')
+        time.sleep(2)
+     
     
 def menu():
     while True:
