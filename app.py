@@ -96,8 +96,28 @@ def view_item():
             time.sleep(2)
     return value
 
-def backup(db):
+def price_format(price):
+    dollars = price // 100
+    cents = price % 100
+    return "${}.{:02}".format(dollars, cents)
+
+def backup():
+    products = []
+    for product in session.query(Product):
+        products.append(product)
+    with open('backup.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        headers = ['product_name', 'product_price', 'product_quantity', 'date_updated']
+        writer.writerow(headers)
+        for item in products:
+            price = price_format(item.product_price)
+            row = [item.product_name, price, item.product_quantity, item.date_updated.strftime('%m/%d/%Y')]
+            writer.writerow(row)
+        print('Operation Successful')
+        time.sleep(2)
     
+def add_product():
+    pass
     
 def menu():
     while True:
