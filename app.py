@@ -136,7 +136,7 @@ def add_product():
         fixed_price = clean_price(price)
         if type(fixed_price) == int:
             price_error = False
-    if not product_exists(name)
+    if not product_exists(name):
         new_item = Product(product_name = name, product_price = fixed_price, product_quantity = fixed_quant, date_updated = date_fixed)
         session.add(new_item)
         session.commit()
