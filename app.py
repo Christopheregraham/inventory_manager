@@ -28,10 +28,14 @@ def clean_date(date):
 
 def clean_price(price):
     try:
-        cleaned = price.split('$')
-        converted = float(cleaned[1])
-        new_price = int(converted * 100)
-    except ValueError:
+        if '$' in price:
+            cleaned = price.split('$')
+            converted = float(cleaned[1])
+            new_price = int(converted * 100)
+        else:
+            converted = float(price)
+            new_price = int(converted * 100)
+    except ValueError as err:
         input('''
               \rThe price format is invalid
               \r Price should be dollar and cents
